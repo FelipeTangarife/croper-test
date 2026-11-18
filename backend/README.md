@@ -7,7 +7,7 @@ NestJS REST API with MongoDB to manage the product catalog: paginated listing, s
 1. Start MongoDB from the repository root: `docker compose up -d`
 2. Create the env file: `cp .env.example .env`
 3. Install dependencies: `pnpm install`
-4. Load the sample catalog (50 products): `pnpm seed`
+4. Create the admin user and load the sample catalog (50 products): `pnpm seed`
 5. Run the API: `pnpm dev` → http://localhost:3000
 
 **Swagger docs:** http://localhost:3000/docs (OpenAPI JSON at `/docs-json`)
@@ -19,6 +19,17 @@ NestJS REST API with MongoDB to manage the product catalog: paginated listing, s
 | `MONGO_URI` | Yes | — | MongoDB connection string |
 | `PORT` | No | `3000` | HTTP port |
 | `CORS_ORIGIN` | No | `http://localhost:5173` | Allowed frontend origin |
+| `SEED_ADMIN_EMAIL` | For `pnpm seed` | — | Admin email, stored in lowercase |
+| `SEED_ADMIN_NAME` | No | `Admin` | Admin display name (2 to 100 characters) |
+| `SEED_ADMIN_PASSWORD` | No | Random | Admin password, at least 8 characters. When empty, a random one is generated and printed once |
+
+Demo values for a quick review:
+
+```bash
+SEED_ADMIN_EMAIL=admin@croper.test
+SEED_ADMIN_NAME=Admin
+SEED_ADMIN_PASSWORD=Admin1234!
+```
 
 ## Commands
 
@@ -29,7 +40,7 @@ NestJS REST API with MongoDB to manage the product catalog: paginated listing, s
 | `pnpm start:debug` | Starts in watch mode with the debugger attached |
 | `pnpm build` | Compiles to `dist/` |
 | `pnpm start:prod` | Runs the compiled build |
-| `pnpm seed` | Builds and inserts 50 sample products. Safe to re-run: existing SKUs are skipped |
+| `pnpm seed` | Builds, creates the admin user and inserts 50 sample products. Safe to re-run: an existing admin and existing SKUs are left untouched. Fails without creating anything when the admin config is invalid |
 | `pnpm lint` | Runs oxlint with type-aware rules |
 | `pnpm format` | Formats the code with Prettier |
 | `pnpm test` | Runs the unit tests once (Vitest) |
@@ -59,6 +70,7 @@ Invalid ObjectIds and properties not declared in the DTOs return 400.
 | [class-validator](https://github.com/typestack/class-validator) + [class-transformer](https://github.com/typestack/class-transformer) | 0.15 / 0.5 | DTO validation and transformation |
 | [@nestjs/swagger](https://docs.nestjs.com/openapi/introduction) | 12 | OpenAPI docs and Swagger UI |
 | [@nestjs/config](https://docs.nestjs.com/techniques/configuration) + [Joi](https://joi.dev) | 12 / 18 | Environment variables and their validation |
+| [bcrypt](https://github.com/kelektiv/node.bcrypt.js) | 6 | Password hashing |
 | [Vitest](https://vitest.dev) + [Supertest](https://github.com/ladjs/supertest) | 4 / 7 | Unit and e2e tests |
 | [oxlint](https://oxc.rs) + [Prettier](https://prettier.io) | 1 / 3 | Linting and formatting |
 
@@ -73,7 +85,8 @@ src/
 │   ├── schemas/          # Mongoose schema
 │   ├── products.controller.ts
 │   └── products.service.ts
-└── seed/                 # Idempotent product seeder
+├── users/                # User schema and service, used internally by auth (no endpoints)
+└── seed/                 # Idempotent admin and product seeders
 ```
 
 Requests flow **Controller (HTTP only) → Service (business logic) → Mongoose model**.
