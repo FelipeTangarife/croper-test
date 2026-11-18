@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios'
 import { Loader2Icon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { TOO_MANY_REQUESTS_MESSAGE } from '@/lib/rate-limit-interceptor'
 import { Button } from '@/shared/components/ui/button'
 import { Input } from '@/shared/components/ui/input'
 import { Label } from '@/shared/components/ui/label'
@@ -18,6 +19,7 @@ const getLoginErrorMessage = (error: unknown) => {
     return 'No se pudo conectar con el servidor. Revisa tu conexión e intenta de nuevo.'
   }
   if (error.response.status === 401) return 'Credenciales inválidas'
+  if (error.response.status === 429) return TOO_MANY_REQUESTS_MESSAGE
   return 'No se pudo iniciar sesión. Intenta de nuevo.'
 }
 

@@ -18,6 +18,7 @@ describe('getErrorMessage', () => {
     [400, 'Algunos datos no son válidos. Revísalos e intenta de nuevo.'],
     [404, 'El producto ya no existe.'],
     [409, 'Ya existe un producto con ese SKU'],
+    [429, 'Demasiados intentos, espera un minuto'],
     [500, FALLBACK],
   ])('maps HTTP %d to a friendly message', (status, message) => {
     expect(getErrorMessage(httpError(status), FALLBACK)).toBe(message)

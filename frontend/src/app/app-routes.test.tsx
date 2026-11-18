@@ -33,9 +33,11 @@ const activeSession = (expiresInMs = 60 * 60 * 1000): AuthSession => ({
   expiresAt: Date.now() + expiresInMs,
 })
 
-const unauthorized = () =>
+const unauthorized = () => httpError(401)
+
+const httpError = (status: number) =>
   new AxiosError('Request failed', 'ERR_BAD_REQUEST', undefined, undefined, {
-    status: 401,
+    status,
     statusText: '',
     headers: {},
     config: { headers: new AxiosHeaders() },
@@ -101,6 +103,18 @@ describe('AppRoutes', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Credenciales inválidas')
     expect(useAuthStore.getState().session).toBeNull()
+  })
+
+  it('shows the blocking message after too many login attempts', async () => {
+    const u = userEvent.setup()
+    login.mockRejectedValue(httpError(429))
+    renderAt('/login')
+
+    await fillLogin(u, 'admin@croper.test', 'Wrong1234!')
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Demasiados intentos, espera un minuto',
+    )
   })
 
   it('validates the login form before calling the API', async () => {
