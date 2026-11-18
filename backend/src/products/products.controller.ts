@@ -11,7 +11,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ParseObjectIdPipe } from '@nestjs/mongoose';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe.js';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -44,9 +44,12 @@ const idParam = ApiParam({
 
 @ApiTags('products')
 @ApiBearerAuth()
-@ApiUnauthorizedResponse({ description: 'Missing, invalid or expired token' })
+@ApiUnauthorizedResponse({
+  description:
+    'Missing, invalid or expired token: "Token de acceso ausente, inválido o vencido"',
+})
 @ApiTooManyRequestsResponse({
-  description: 'Demasiados intentos, espera un minuto',
+  description: 'Too many requests: "Demasiados intentos, espera un minuto"',
 })
 @Controller('products')
 export class ProductsController {
@@ -67,10 +70,10 @@ export class ProductsController {
   @ApiOperation({ summary: 'Get an active product by id' })
   @ApiOkResponse({ type: ProductResponseDto })
   @ApiBadRequestResponse({
-    description: 'Invalid ObjectId',
+    description: 'Invalid ObjectId: "El id no es válido"',
   })
   @ApiNotFoundResponse({
-    description: 'Product not found',
+    description: 'Product not found: "Producto no encontrado"',
   })
   findOne(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.productsService.findOne(id);
@@ -81,7 +84,7 @@ export class ProductsController {
   @ApiCreatedResponse({ type: ProductResponseDto })
   @ApiBadRequestResponse({ description: 'Validation failed' })
   @ApiConflictResponse({
-    description: 'Ya existe un producto con ese SKU',
+    description: 'Duplicated SKU: "Ya existe un producto con ese SKU"',
   })
   create(@Body() dto: CreateProductDto) {
     return this.productsService.create(dto);
@@ -93,7 +96,7 @@ export class ProductsController {
   @ApiOkResponse({ type: ProductResponseDto })
   @ApiBadRequestResponse({ description: 'Validation failed or invalid id' })
   @ApiNotFoundResponse({
-    description: 'Product not found',
+    description: 'Product not found: "Producto no encontrado"',
   })
   update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
@@ -108,10 +111,10 @@ export class ProductsController {
   @ApiOperation({ summary: 'Soft delete a product' })
   @ApiNoContentResponse({ description: 'Product deleted' })
   @ApiBadRequestResponse({
-    description: 'Invalid ObjectId',
+    description: 'Invalid ObjectId: "El id no es válido"',
   })
   @ApiNotFoundResponse({
-    description: 'Product not found',
+    description: 'Product not found: "Producto no encontrado"',
   })
   remove(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     return this.productsService.remove(id);

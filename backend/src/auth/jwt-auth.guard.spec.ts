@@ -60,11 +60,18 @@ describe('JwtAuthGuard', () => {
     ['without a token', undefined],
     ['with another scheme', 'Basic abc'],
     ['with a malformed token', 'Bearer not-a-jwt'],
-  ])('rejects a request %s', async (_label, header) => {
+  ])('rejects a request %s with a Spanish message', async (_label, header) => {
     const { context } = contextWith(header);
-    await expect(guard.canActivate(context)).rejects.toThrow(
-      UnauthorizedException,
-    );
+    const error = await guard
+      .canActivate(context)
+      .catch((e: unknown) => e as UnauthorizedException);
+
+    expect(error).toBeInstanceOf(UnauthorizedException);
+    expect(error.getResponse()).toEqual({
+      statusCode: 401,
+      message: 'Token de acceso ausente, inválido o vencido',
+      error: 'Unauthorized',
+    });
   });
 
   it('rejects a token signed with another secret', async () => {

@@ -35,10 +35,10 @@ export class AuthController {
   @ApiOkResponse({ type: LoginResponseDto })
   @ApiBadRequestResponse({ description: 'Invalid body' })
   @ApiUnauthorizedResponse({
-    description: 'Credenciales inválidas',
+    description: 'Invalid credentials: "Credenciales inválidas"',
   })
   @ApiTooManyRequestsResponse({
-    description: 'Demasiados intentos, espera un minuto',
+    description: 'Too many requests: "Demasiados intentos, espera un minuto"',
   })
   login(@Body() { email, password }: LoginDto) {
     return this.authService.login(email, password);

@@ -11,6 +11,8 @@ import type { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../common/decorators/public.decorator.js';
 import type { JwtPayload } from './auth.service.js';
 
+const UNAUTHORIZED_MESSAGE = 'Token de acceso ausente, inválido o vencido';
+
 export interface AuthenticatedUser {
   userId: string;
   email: string;
@@ -39,7 +41,7 @@ export class JwtAuthGuard implements CanActivate {
       .switchToHttp()
       .getRequest<Request & { user?: AuthenticatedUser }>();
     const token = extractBearerToken(request);
-    if (!token) throw new UnauthorizedException();
+    if (!token) throw new UnauthorizedException(UNAUTHORIZED_MESSAGE);
 
     try {
       const { sub, email } =
@@ -47,7 +49,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = { userId: sub, email };
       return true;
     } catch {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(UNAUTHORIZED_MESSAGE);
     }
   }
 }
