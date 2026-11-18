@@ -116,14 +116,13 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
         setError('sku', { message: DUPLICATE_SKU_MESSAGE }, { shouldFocus: true })
         return
       }
-      toast.error(
-        getErrorMessage(
-          error,
-          isEditing
-            ? 'No se pudo actualizar el producto. Intenta de nuevo.'
-            : 'No se pudo crear el producto. Intenta de nuevo.',
-        ),
+      const message = getErrorMessage(
+        error,
+        isEditing
+          ? 'No se pudo actualizar el producto. Intenta de nuevo.'
+          : 'No se pudo crear el producto. Intenta de nuevo.',
       )
+      toast.error(message, { id: message })
     }
   })
 

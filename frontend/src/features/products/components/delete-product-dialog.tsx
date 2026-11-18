@@ -34,9 +34,11 @@ export function DeleteProductDialog({
         onDeleted()
       },
       onError: (error) => {
-        toast.error(
-          getErrorMessage(error, 'No se pudo eliminar el producto. Intenta de nuevo.'),
+        const message = getErrorMessage(
+          error,
+          'No se pudo eliminar el producto. Intenta de nuevo.',
         )
+        toast.error(message, { id: message })
       },
       onSettled: () => onOpenChange(false),
     })
