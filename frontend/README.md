@@ -36,6 +36,7 @@ VITE_API_URL=http://localhost:3000
 - The token, the user and the expiration date are persisted in a Zustand store (`localStorage`), so a reload keeps the session until the token expires.
 - An Axios interceptor adds `Authorization: Bearer <token>` to every request. A 401 from the API logs out and shows "Tu sesión expiró, vuelve a ingresar" on the login.
 - The session also ends on its own when the token expires, even without new requests.
+- A 429 from the API shows "Demasiados intentos, espera un minuto": inline on the login, as a toast everywhere else.
 
 ## Tech stack
 
