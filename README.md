@@ -1,4 +1,7 @@
 # croper-test — Product management
+<img width="863" height="590" alt="image" src="https://github.com/user-attachments/assets/36da479d-ac3b-4cbd-b3bd-d1999ad277a6" />
+<img width="495" height="837" alt="image" src="https://github.com/user-attachments/assets/f3bec38d-2bcf-4d13-ab85-65193d62b6dd" />
+
 
 Technical test: a product catalog manager where an admin can list, search, create, edit and delete products.
 
