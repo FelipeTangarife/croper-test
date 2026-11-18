@@ -234,32 +234,37 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
           const keyError = errors.specs?.[index]?.key?.message
           const valueError = errors.specs?.[index]?.value?.message
           return (
-            <div key={spec.id} className="flex items-start gap-2">
-              <div className="flex-1">
-                <Input
-                  {...fieldA11y(`specs-${index}-key`, keyError)}
-                  {...register(`specs.${index}.key`)}
-                  aria-label={`Nombre de la especificación ${index + 1}`}
-                  placeholder="Nombre (ej. Origen)"
-                />
-                {keyError && (
-                  <p id={`specs-${index}-key-error`} className="mt-1 text-xs text-destructive">
-                    {keyError}
-                  </p>
-                )}
-              </div>
-              <div className="flex-1">
-                <Input
-                  {...fieldA11y(`specs-${index}-value`, valueError)}
-                  {...register(`specs.${index}.value`)}
-                  aria-label={`Valor de la especificación ${index + 1}`}
-                  placeholder="Valor (ej. Huila)"
-                />
-                {valueError && (
-                  <p id={`specs-${index}-value-error`} className="mt-1 text-xs text-destructive">
-                    {valueError}
-                  </p>
-                )}
+            <div
+              key={spec.id}
+              className="flex items-start gap-2 rounded-lg border p-2 sm:rounded-none sm:border-0 sm:p-0"
+            >
+              <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-2">
+                <div className="min-w-0">
+                  <Input
+                    {...fieldA11y(`specs-${index}-key`, keyError)}
+                    {...register(`specs.${index}.key`)}
+                    aria-label={`Nombre de la especificación ${index + 1}`}
+                    placeholder="Nombre (ej. Origen)"
+                  />
+                  {keyError && (
+                    <p id={`specs-${index}-key-error`} className="mt-1 text-xs text-destructive">
+                      {keyError}
+                    </p>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <Input
+                    {...fieldA11y(`specs-${index}-value`, valueError)}
+                    {...register(`specs.${index}.value`)}
+                    aria-label={`Valor de la especificación ${index + 1}`}
+                    placeholder="Valor (ej. Huila)"
+                  />
+                  {valueError && (
+                    <p id={`specs-${index}-value-error`} className="mt-1 text-xs text-destructive">
+                      {valueError}
+                    </p>
+                  )}
+                </div>
               </div>
               <Button
                 type="button"
