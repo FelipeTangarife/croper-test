@@ -22,6 +22,8 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto.js';
@@ -40,6 +42,8 @@ const idParam = ApiParam({
 });
 
 @ApiTags('products')
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({ description: 'Missing, invalid or expired token' })
 @Controller('products')
 export class ProductsController {
   constructor(

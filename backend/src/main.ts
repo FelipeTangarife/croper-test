@@ -20,11 +20,15 @@ async function bootstrap() {
     .setTitle('Products API')
     .setDescription('Product management API')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   SwaggerModule.setup(
     'docs',
     app,
     SwaggerModule.createDocument(app, swaggerConfig),
+    {
+      swaggerOptions: { persistAuthorization: true },
+    },
   );
 
   await app.listen(process.env.PORT ?? 3000);

@@ -19,9 +19,11 @@ NestJS REST API with MongoDB to manage the product catalog: paginated listing, s
 | `MONGO_URI` | Yes | — | MongoDB connection string |
 | `PORT` | No | `3000` | HTTP port |
 | `CORS_ORIGIN` | No | `http://localhost:5173` | Allowed frontend origin |
+| `JWT_SECRET` | Yes | — | Secret used to sign the access tokens |
+| `JWT_EXPIRES_IN` | No | `3600s` | Token lifetime: a number plus a unit (`ms`, `s`, `m`, `h`, `d`) |
 | `SEED_ADMIN_EMAIL` | For `pnpm seed` | — | Admin email, stored in lowercase |
 | `SEED_ADMIN_NAME` | No | `Admin` | Admin display name (2 to 100 characters) |
-| `SEED_ADMIN_PASSWORD` | No | Random | Admin password, at least 8 characters. When empty, a random one is generated and printed once |
+| `SEED_ADMIN_PASSWORD` | No | Random | Admin password |
 
 Demo values for a quick review:
 
@@ -50,8 +52,11 @@ SEED_ADMIN_PASSWORD=Admin1234!
 
 ## Endpoints
 
+Every endpoint requires `Authorization: Bearer <accessToken>` and answers 401 without a token or with an invalid or expired one. Only the login is public.
+
 | Method | Path | Responses | Description |
 |--------|------|-----------|-------------|
+| `POST` | `/auth/login` | 200, 400, 401 | Returns `accessToken`, `expiresIn` (seconds) and `user`. A wrong password and an unknown email return the same 401 "Credenciales inválidas" |
 | `GET` | `/products?page=1&limit=10&search=cafe&sortBy=price&order=asc` | 200, 400 | Paginated list of active products. Search matches name or SKU, case-insensitive |
 | `GET` | `/products/:id` | 200, 400, 404 | Product by id |
 | `POST` | `/products` | 201, 400, 409 | Create a product. Duplicated SKU → 409 |
@@ -59,6 +64,8 @@ SEED_ADMIN_PASSWORD=Admin1234!
 | `DELETE` | `/products/:id` | 204, 400, 404 | Soft delete (`isActive: false`). The SKU can be reused afterwards |
 
 Invalid ObjectIds and properties not declared in the DTOs return 400.
+
+**Try it in Swagger:** call `POST /auth/login`, copy the `accessToken`, click **Authorize** and paste it. The token is kept across page reloads.
 
 ## Tech stack
 
@@ -71,6 +78,7 @@ Invalid ObjectIds and properties not declared in the DTOs return 400.
 | [@nestjs/swagger](https://docs.nestjs.com/openapi/introduction) | 12 | OpenAPI docs and Swagger UI |
 | [@nestjs/config](https://docs.nestjs.com/techniques/configuration) + [Joi](https://joi.dev) | 12 / 18 | Environment variables and their validation |
 | [bcrypt](https://github.com/kelektiv/node.bcrypt.js) | 6 | Password hashing |
+| [@nestjs/jwt](https://github.com/nestjs/jwt) | 12 | Signing and verifying access tokens, global auth guard |
 | [Vitest](https://vitest.dev) + [Supertest](https://github.com/ladjs/supertest) | 4 / 7 | Unit and e2e tests |
 | [oxlint](https://oxc.rs) + [Prettier](https://prettier.io) | 1 / 3 | Linting and formatting |
 
@@ -80,6 +88,8 @@ Invalid ObjectIds and properties not declared in the DTOs return 400.
 src/
 ├── main.ts               # Bootstrap: CORS, ValidationPipe, Swagger
 ├── config/               # Env validation and database module
+├── common/decorators/    # @Public() to skip the global auth guard
+├── auth/                 # Login endpoint, JWT guard (APP_GUARD)
 ├── products/
 │   ├── dto/              # Request, query and response DTOs
 │   ├── schemas/          # Mongoose schema

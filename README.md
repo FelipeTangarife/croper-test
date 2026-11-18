@@ -32,6 +32,8 @@ pnpm install
 pnpm dev
 ```
 
+Log in with the admin created by `pnpm seed` (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` from `backend/.env`).
+
 ## Checks
 
 Run in each project:
