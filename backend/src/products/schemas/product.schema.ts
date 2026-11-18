@@ -127,7 +127,6 @@ export type ProductDocument = HydratedDocument<Product>;
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
 
-// SKU is unique only among active products, so a soft-deleted SKU can be reused.
 ProductSchema.index(
   { sku: 1 },
   { unique: true, partialFilterExpression: { isActive: true } },
